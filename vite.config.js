@@ -5,6 +5,10 @@ export default {
         server: {
                 host: '0.0.0.0',
                 port: 5000,
-                allowedHosts: ['all']
+                allowedHosts: true,
+                hmr: { 
+                        clientPort: 443,
+                        host: 'localhost'
+                }
         }
 };
