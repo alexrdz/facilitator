@@ -1,0 +1,899 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerSync - Engineer's 1:1 & Performance Tool</title>
+    <style>
+        @layer reset, base, components, utilities;
+
+        @layer reset {
+            *, *::before, *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            
+            body {
+                line-height: 1.5;
+                -webkit-font-smoothing: antialiased;
+            }
+            
+            img, picture, video, canvas, svg {
+                display: block;
+                max-inline-size: 100%;
+            }
+            
+            input, button, textarea, select {
+                font: inherit;
+            }
+        }
+
+        @layer base {
+            :root {
+                --color-primary: #2563eb;
+                --color-primary-hover: #1d4ed8;
+                --color-secondary: #64748b;
+                --color-background: #ffffff;
+                --color-surface: #f8fafc;
+                --color-border: #e2e8f0;
+                --color-text: #1e293b;
+                --color-text-secondary: #64748b;
+                --color-success: #10b981;
+                --color-warning: #f59e0b;
+                --color-error: #ef4444;
+                --color-muted: #f1f5f9;
+                
+                --spacing-xs: 0.25rem;
+                --spacing-sm: 0.5rem;
+                --spacing-md: 1rem;
+                --spacing-lg: 1.5rem;
+                --spacing-xl: 2rem;
+                --spacing-2xl: 3rem;
+                
+                --radius-sm: 0.375rem;
+                --radius-md: 0.5rem;
+                --radius-lg: 0.75rem;
+                
+                --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+                --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+                --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+                
+                --font-size-sm: 0.875rem;
+                --font-size-base: 1rem;
+                --font-size-lg: 1.125rem;
+                --font-size-xl: 1.25rem;
+                --font-size-2xl: 1.5rem;
+                --font-size-3xl: 1.875rem;
+            }
+            
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                background-color: var(--color-surface);
+                color: var(--color-text);
+                font-size: var(--font-size-base);
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+                font-weight: 600;
+                line-height: 1.25;
+                margin-block-end: var(--spacing-md);
+            }
+            
+            h1 { font-size: var(--font-size-3xl); }
+            h2 { font-size: var(--font-size-2xl); }
+            h3 { font-size: var(--font-size-xl); }
+            h4 { font-size: var(--font-size-lg); }
+        }
+
+        @layer components {
+            .container {
+                max-inline-size: 1200px;
+                margin-inline: auto;
+                padding-inline: var(--spacing-md);
+            }
+            
+            .header {
+                background-color: var(--color-background);
+                border-block-end: 1px solid var(--color-border);
+                padding-block: var(--spacing-lg);
+                position: sticky;
+                inset-block-start: 0;
+                z-index: 100;
+            }
+            
+            .header-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .logo {
+                font-size: var(--font-size-xl);
+                font-weight: 700;
+                color: var(--color-primary);
+            }
+            
+            .nav-tabs {
+                display: flex;
+                gap: var(--spacing-xs);
+                background-color: var(--color-muted);
+                padding: var(--spacing-xs);
+                border-radius: var(--radius-lg);
+            }
+            
+            .nav-tab {
+                background: transparent;
+                border: none;
+                padding: var(--spacing-sm) var(--spacing-lg);
+                border-radius: var(--radius-md);
+                font-weight: 500;
+                color: var(--color-text-secondary);
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            
+            .nav-tab:hover {
+                background-color: var(--color-background);
+                color: var(--color-text);
+            }
+            
+            .nav-tab.active {
+                background-color: var(--color-background);
+                color: var(--color-primary);
+                box-shadow: var(--shadow-sm);
+            }
+            
+            .main-content {
+                padding-block: var(--spacing-2xl);
+                min-block-size: calc(100vh - 120px);
+            }
+            
+            .module {
+                display: none;
+            }
+            
+            .module.active {
+                display: block;
+            }
+            
+            .card {
+                background-color: var(--color-background);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-md);
+                padding: var(--spacing-xl);
+                margin-block-end: var(--spacing-lg);
+            }
+            
+            .form-group {
+                margin-block-end: var(--spacing-lg);
+            }
+            
+            .form-label {
+                display: block;
+                font-weight: 500;
+                margin-block-end: var(--spacing-sm);
+                color: var(--color-text);
+            }
+            
+            .form-input, .form-textarea, .form-select {
+                inline-size: 100%;
+                padding: var(--spacing-md);
+                border: 1px solid var(--color-border);
+                border-radius: var(--radius-md);
+                font-size: var(--font-size-base);
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            }
+            
+            .form-input:focus, .form-textarea:focus, .form-select:focus {
+                outline: none;
+                border-color: var(--color-primary);
+                box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+            }
+            
+            .form-textarea {
+                min-block-size: 120px;
+                resize: vertical;
+            }
+            
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+                padding: var(--spacing-md) var(--spacing-lg);
+                border: none;
+                border-radius: var(--radius-md);
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                text-decoration: none;
+            }
+            
+            .btn-primary {
+                background-color: var(--color-primary);
+                color: white;
+            }
+            
+            .btn-primary:hover {
+                background-color: var(--color-primary-hover);
+            }
+            
+            .btn-secondary {
+                background-color: var(--color-background);
+                color: var(--color-text);
+                border: 1px solid var(--color-border);
+            }
+            
+            .btn-secondary:hover {
+                background-color: var(--color-surface);
+            }
+            
+            .btn-sm {
+                padding: var(--spacing-sm) var(--spacing-md);
+                font-size: var(--font-size-sm);
+            }
+            
+            .grid {
+                display: grid;
+                gap: var(--spacing-lg);
+            }
+            
+            .grid-2 {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+            
+            .achievement-item {
+                background-color: var(--color-background);
+                border: 1px solid var(--color-border);
+                border-radius: var(--radius-md);
+                padding: var(--spacing-lg);
+                margin-block-end: var(--spacing-md);
+                transition: box-shadow 0.2s ease;
+            }
+            
+            .achievement-item:hover {
+                box-shadow: var(--shadow-md);
+            }
+            
+            .achievement-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-block-end: var(--spacing-md);
+            }
+            
+            .achievement-date {
+                font-size: var(--font-size-sm);
+                color: var(--color-text-secondary);
+                font-weight: 500;
+            }
+            
+            .achievement-title {
+                font-weight: 600;
+                margin-block-end: var(--spacing-sm);
+            }
+            
+            .achievement-actions {
+                display: flex;
+                gap: var(--spacing-sm);
+            }
+            
+            .rating-group {
+                display: flex;
+                gap: var(--spacing-sm);
+                align-items: center;
+            }
+            
+            .star-rating {
+                display: flex;
+                gap: var(--spacing-xs);
+            }
+            
+            .star {
+                inline-size: 24px;
+                block-size: 24px;
+                cursor: pointer;
+                color: var(--color-border);
+                transition: color 0.2s ease;
+            }
+            
+            .star.filled {
+                color: var(--color-warning);
+            }
+            
+            .prep-section {
+                margin-block-end: var(--spacing-xl);
+            }
+            
+            .accomplishment-selector {
+                max-block-size: 300px;
+                overflow-y: auto;
+                border: 1px solid var(--color-border);
+                border-radius: var(--radius-md);
+                padding: var(--spacing-md);
+                background-color: var(--color-surface);
+            }
+            
+            .checkbox-item {
+                display: flex;
+                align-items: flex-start;
+                gap: var(--spacing-sm);
+                padding: var(--spacing-sm);
+                border-radius: var(--radius-sm);
+                margin-block-end: var(--spacing-sm);
+            }
+            
+            .checkbox-item:hover {
+                background-color: var(--color-muted);
+            }
+            
+            .checkbox-item input[type="checkbox"] {
+                margin-block-start: var(--spacing-xs);
+            }
+            
+            .print-view {
+                background-color: var(--color-background);
+                padding: var(--spacing-2xl);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-lg);
+                margin-block-start: var(--spacing-xl);
+            }
+            
+            .empty-state {
+                text-align: center;
+                padding: var(--spacing-2xl);
+                color: var(--color-text-secondary);
+            }
+            
+            .empty-state h3 {
+                margin-block-end: var(--spacing-md);
+                color: var(--color-text);
+            }
+
+            @media (max-width: 768px) {
+                .header-content {
+                    flex-direction: column;
+                    gap: var(--spacing-lg);
+                }
+                
+                .nav-tabs {
+                    inline-size: 100%;
+                    justify-content: center;
+                }
+                
+                .grid-2 {
+                    grid-template-columns: 1fr;
+                }
+                
+                .achievement-header {
+                    flex-direction: column;
+                    gap: var(--spacing-sm);
+                }
+                
+                .achievement-actions {
+                    inline-size: 100%;
+                    justify-content: flex-end;
+                }
+            }
+
+            @media print {
+                .header, .nav-tabs, .btn, .achievement-actions {
+                    display: none !important;
+                }
+                
+                .print-view {
+                    box-shadow: none;
+                    border: 1px solid var(--color-border);
+                }
+                
+                * {
+                    color: black !important;
+                    background: white !important;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">CareerSync</div>
+                <nav class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchModule('prep')">1:1 Prep</button>
+                    <button class="nav-tab" onclick="switchModule('hype')">Hype Docs</button>
+                    <button class="nav-tab" onclick="switchModule('reflection')">Reflection</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- 1:1 Prep Module -->
+            <div id="prep-module" class="module active">
+                <div class="card">
+                    <h2>1:1 Meeting Preparation</h2>
+                    <p style="color: var(--color-text-secondary); margin-block-end: var(--spacing-xl);">
+                        Prepare for your upcoming 1:1 by selecting accomplishments and adding discussion points.
+                    </p>
+
+                    <div class="prep-section">
+                        <h3>Select Accomplishments to Discuss</h3>
+                        <div class="accomplishment-selector" id="accomplishment-selector">
+                            <!-- Accomplishments will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label" for="help-needed">What I Need Help With</label>
+                            <textarea class="form-textarea" id="help-needed" placeholder="Areas where you need guidance or support..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="growth-goals">My Learning/Growth Goals</label>
+                            <textarea class="form-textarea" id="growth-goals" placeholder="Skills you want to develop or goals you're working toward..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="manager-questions">Questions for My Manager</label>
+                            <textarea class="form-textarea" id="manager-questions" placeholder="Specific questions you want to ask..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="additional-notes">Additional Discussion Points</label>
+                            <textarea class="form-textarea" id="additional-notes" placeholder="Other topics you want to discuss..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: var(--spacing-md); margin-block-start: var(--spacing-xl);">
+                        <button class="btn btn-primary" onclick="generateAgenda()">Generate Agenda</button>
+                        <button class="btn btn-secondary" onclick="clearPrepForm()">Clear Form</button>
+                    </div>
+                </div>
+
+                <div id="agenda-preview" class="print-view" style="display: none;">
+                    <!-- Generated agenda will appear here -->
+                </div>
+            </div>
+
+            <!-- Hype Docs Module -->
+            <div id="hype-module" class="module">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-block-end: var(--spacing-lg);">
+                        <h2>Hype Docs - Career Accomplishments</h2>
+                        <button class="btn btn-primary" onclick="showAddForm()">Add New Achievement</button>
+                    </div>
+
+                    <div id="add-achievement-form" style="display: none; margin-block-end: var(--spacing-xl);">
+                        <h3>Add New Achievement</h3>
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label class="form-label" for="achievement-title">Title</label>
+                                <input type="text" class="form-input" id="achievement-title" placeholder="Brief, descriptive title">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="achievement-date">Date</label>
+                                <input type="date" class="form-input" id="achievement-date">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="achievement-action">The What (Action)</label>
+                                <textarea class="form-textarea" id="achievement-action" placeholder="Detailed description of the work performed..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="achievement-context">The Why (Context)</label>
+                                <textarea class="form-textarea" id="achievement-context" placeholder="Problem solved or business need addressed..."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="achievement-impact">The Result (Impact)</label>
+                            <textarea class="form-textarea" id="achievement-impact" placeholder="Quantifiable outcomes, metrics, or results..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-md);">
+                            <button class="btn btn-primary" onclick="saveAchievement()">Save Achievement</button>
+                            <button class="btn btn-secondary" onclick="cancelAddForm()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div id="achievements-list">
+                        <!-- Achievements will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reflection Module -->
+            <div id="reflection-module" class="module">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-block-end: var(--spacing-lg);">
+                        <h2>Meeting Reflections</h2>
+                        <button class="btn btn-primary" onclick="showReflectionForm()">Add New Reflection</button>
+                    </div>
+
+                    <div id="add-reflection-form" style="display: none; margin-block-end: var(--spacing-xl);">
+                        <h3>New Meeting Reflection</h3>
+                        
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label class="form-label" for="reflection-date">Meeting Date</label>
+                                <input type="date" class="form-input" id="reflection-date">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Meeting Rating</label>
+                                <div class="rating-group">
+                                    <div class="star-rating" id="meeting-rating">
+                                        <span class="star" data-rating="1">★</span>
+                                        <span class="star" data-rating="2">★</span>
+                                        <span class="star" data-rating="3">★</span>
+                                        <span class="star" data-rating="4">★</span>
+                                        <span class="star" data-rating="5">★</span>
+                                    </div>
+                                    <span id="rating-text" style="color: var(--color-text-secondary);">Click to rate</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="key-takeaways">Key Takeaways</label>
+                            <textarea class="form-textarea" id="key-takeaways" placeholder="Main points and decisions from the meeting..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="manager-feedback">Manager Feedback</label>
+                            <textarea class="form-textarea" id="manager-feedback" placeholder="Feedback received from your manager..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="action-items">Action Items</label>
+                            <textarea class="form-textarea" id="action-items" placeholder="Follow-up tasks and commitments..."></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: var(--spacing-md);">
+                            <button class="btn btn-primary" onclick="saveReflection()">Save Reflection</button>
+                            <button class="btn btn-secondary" onclick="cancelReflectionForm()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div id="reflections-list">
+                        <!-- Reflections will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Application state
+        let currentModule = 'prep';
+        let achievements = [];
+        let reflections = [];
+        let currentRating = 0;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            populateAccomplishments();
+            renderAchievements();
+            renderReflections();
+            setTodayDates();
+        });
+
+        // Module switching
+        function switchModule(module) {
+            // Update active states
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.module').forEach(mod => mod.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(module + '-module').classList.add('active');
+            
+            currentModule = module;
+        }
+
+        // Data persistence
+        function saveData() {
+            localStorage.setItem('careerSync_achievements', JSON.stringify(achievements));
+            localStorage.setItem('careerSync_reflections', JSON.stringify(reflections));
+        }
+
+        function loadData() {
+            const savedAchievements = localStorage.getItem('careerSync_achievements');
+            const savedReflections = localStorage.getItem('careerSync_reflections');
+            
+            achievements = savedAchievements ? JSON.parse(savedAchievements) : [];
+            reflections = savedReflections ? JSON.parse(savedReflections) : [];
+        }
+
+        // Set today's date for new entries
+        function setTodayDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('achievement-date').value = today;
+            document.getElementById('reflection-date').value = today;
+        }
+
+        // 1:1 Prep functions
+        function populateAccomplishments() {
+            const selector = document.getElementById('accomplishment-selector');
+            
+            if (achievements.length === 0) {
+                selector.innerHTML = '<div class="empty-state"><p>No accomplishments added yet. Go to Hype Docs to add some!</p></div>';
+                return;
+            }
+
+            selector.innerHTML = achievements.map((achievement, index) => `
+                <div class="checkbox-item">
+                    <input type="checkbox" id="achievement-${index}" value="${index}">
+                    <label for="achievement-${index}">
+                        <strong>${achievement.title}</strong><br>
+                        <small style="color: var(--color-text-secondary);">${achievement.date}</small>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function generateAgenda() {
+            const selectedAchievements = Array.from(document.querySelectorAll('#accomplishment-selector input[type="checkbox"]:checked'))
+                .map(checkbox => achievements[parseInt(checkbox.value)]);
+            
+            const helpNeeded = document.getElementById('help-needed').value;
+            const growthGoals = document.getElementById('growth-goals').value;
+            const managerQuestions = document.getElementById('manager-questions').value;
+            const additionalNotes = document.getElementById('additional-notes').value;
+            
+            const today = new Date().toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            const agendaHtml = `
+                <h2>1:1 Meeting Agenda - ${today}</h2>
+                
+                ${selectedAchievements.length > 0 ? `
+                    <h3>Recent Accomplishments</h3>
+                    ${selectedAchievements.map(achievement => `
+                        <div style="margin-block-end: var(--spacing-lg); padding-block-end: var(--spacing-lg); border-block-end: 1px solid var(--color-border);">
+                            <h4>${achievement.title}</h4>
+                            <p><strong>What:</strong> ${achievement.action}</p>
+                            <p><strong>Why:</strong> ${achievement.context}</p>
+                            <p><strong>Impact:</strong> ${achievement.impact}</p>
+                        </div>
+                    `).join('')}
+                ` : ''}
+                
+                ${helpNeeded ? `
+                    <h3>What I Need Help With</h3>
+                    <p>${helpNeeded}</p>
+                ` : ''}
+                
+                ${growthGoals ? `
+                    <h3>My Learning/Growth Goals</h3>
+                    <p>${growthGoals}</p>
+                ` : ''}
+                
+                ${managerQuestions ? `
+                    <h3>Questions for My Manager</h3>
+                    <p>${managerQuestions}</p>
+                ` : ''}
+                
+                ${additionalNotes ? `
+                    <h3>Additional Discussion Points</h3>
+                    <p>${additionalNotes}</p>
+                ` : ''}
+            `;
+
+            document.getElementById('agenda-preview').innerHTML = agendaHtml;
+            document.getElementById('agenda-preview').style.display = 'block';
+            document.getElementById('agenda-preview').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearPrepForm() {
+            document.getElementById('help-needed').value = '';
+            document.getElementById('growth-goals').value = '';
+            document.getElementById('manager-questions').value = '';
+            document.getElementById('additional-notes').value = '';
+            document.querySelectorAll('#accomplishment-selector input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('agenda-preview').style.display = 'none';
+        }
+
+        // Hype Docs functions
+        function showAddForm() {
+            document.getElementById('add-achievement-form').style.display = 'block';
+            setTodayDates();
+        }
+
+        function cancelAddForm() {
+            document.getElementById('add-achievement-form').style.display = 'none';
+            clearAchievementForm();
+        }
+
+        function clearAchievementForm() {
+            document.getElementById('achievement-title').value = '';
+            document.getElementById('achievement-action').value = '';
+            document.getElementById('achievement-context').value = '';
+            document.getElementById('achievement-impact').value = '';
+            setTodayDates();
+        }
+
+        function saveAchievement() {
+            const title = document.getElementById('achievement-title').value;
+            const date = document.getElementById('achievement-date').value;
+            const action = document.getElementById('achievement-action').value;
+            const context = document.getElementById('achievement-context').value;
+            const impact = document.getElementById('achievement-impact').value;
+
+            if (!title || !action || !context || !impact) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const achievement = {
+                id: Date.now(),
+                title,
+                date,
+                action,
+                context,
+                impact
+            };
+
+            achievements.unshift(achievement);
+            saveData();
+            renderAchievements();
+            populateAccomplishments();
+            cancelAddForm();
+        }
+
+        function renderAchievements() {
+            const list = document.getElementById('achievements-list');
+            
+            if (achievements.length === 0) {
+                list.innerHTML = '<div class="empty-state"><h3>No achievements yet</h3><p>Start building your career narrative by adding your first accomplishment!</p></div>';
+                return;
+            }
+
+            list.innerHTML = achievements.map((achievement, index) => `
+                <div class="achievement-item">
+                    <div class="achievement-header">
+                        <div>
+                            <div class="achievement-date">${achievement.date}</div>
+                            <div class="achievement-title">${achievement.title}</div>
+                        </div>
+                        <div class="achievement-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="editAchievement(${index})">Edit</button>
+                            <button class="btn btn-sm btn-secondary" onclick="deleteAchievement(${index})" style="color: var(--color-error);">Delete</button>
+                        </div>
+                    </div>
+                    <div style="margin-block-end: var(--spacing-sm);"><strong>What:</strong> ${achievement.action}</div>
+                    <div style="margin-block-end: var(--spacing-sm);"><strong>Why:</strong> ${achievement.context}</div>
+                    <div><strong>Impact:</strong> ${achievement.impact}</div>
+                </div>
+            `).join('');
+        }
+
+        function deleteAchievement(index) {
+            if (confirm('Are you sure you want to delete this achievement?')) {
+                achievements.splice(index, 1);
+                saveData();
+                renderAchievements();
+                populateAccomplishments();
+            }
+        }
+
+        function editAchievement(index) {
+            // TODO: Implement edit functionality
+            alert('Edit functionality would be implemented here');
+        }
+
+        // Reflection functions
+        function showReflectionForm() {
+            document.getElementById('add-reflection-form').style.display = 'block';
+            setTodayDates();
+            resetRating();
+        }
+
+        function cancelReflectionForm() {
+            document.getElementById('add-reflection-form').style.display = 'none';
+            clearReflectionForm();
+        }
+
+        function clearReflectionForm() {
+            document.getElementById('key-takeaways').value = '';
+            document.getElementById('manager-feedback').value = '';
+            document.getElementById('action-items').value = '';
+            resetRating();
+            setTodayDates();
+        }
+
+        function resetRating() {
+            currentRating = 0;
+            updateStarDisplay();
+        }
+
+        // Star rating functionality
+        document.getElementById('meeting-rating').addEventListener('click', function(e) {
+            if (e.target.classList.contains('star')) {
+                currentRating = parseInt(e.target.dataset.rating);
+                updateStarDisplay();
+            }
+        });
+
+        function updateStarDisplay() {
+            const stars = document.querySelectorAll('#meeting-rating .star');
+            const ratingText = document.getElementById('rating-text');
+            
+            stars.forEach((star, index) => {
+                if (index < currentRating) {
+                    star.classList.add('filled');
+                } else {
+                    star.classList.remove('filled');
+                }
+            });
+
+            const ratingLabels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+            ratingText.textContent = currentRating > 0 ? ratingLabels[currentRating] : 'Click to rate';
+        }
+
+        function saveReflection() {
+            const date = document.getElementById('reflection-date').value;
+            const takeaways = document.getElementById('key-takeaways').value;
+            const feedback = document.getElementById('manager-feedback').value;
+            const actionItems = document.getElementById('action-items').value;
+
+            if (!takeaways || currentRating === 0) {
+                alert('Please provide a rating and key takeaways');
+                return;
+            }
+
+            const reflection = {
+                id: Date.now(),
+                date,
+                rating: currentRating,
+                takeaways,
+                feedback,
+                actionItems
+            };
+
+            reflections.unshift(reflection);
+            saveData();
+            renderReflections();
+            cancelReflectionForm();
+        }
+
+        function renderReflections() {
+            const list = document.getElementById('reflections-list');
+            
+            if (reflections.length === 0) {
+                list.innerHTML = '<div class="empty-state"><h3>No reflections yet</h3><p>Start tracking your 1:1 meetings by adding your first reflection!</p></div>';
+                return;
+            }
+
+            list.innerHTML = reflections.map((reflection, index) => `
+                <div class="achievement-item">
+                    <div class="achievement-header">
+                        <div>
+                            <div class="achievement-date">${reflection.date}</div>
+                            <div class="achievement-title">
+                                Meeting Rating: ${'★'.repeat(reflection.rating)}${'☆'.repeat(5 - reflection.rating)}
+                            </div>
+                        </div>
+                        <div class="achievement-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="deleteReflection(${index})" style="color: var(--color-error);">Delete</button>
+                        </div>
+                    </div>
+                    <div style="margin-block-end: var(--spacing-sm);"><strong>Key Takeaways:</strong> ${reflection.takeaways}</div>
+                    ${reflection.feedback ? `<div style="margin-block-end: var(--spacing-sm);"><strong>Manager Feedback:</strong> ${reflection.feedback}</div>` : ''}
+                    ${reflection.actionItems ? `<div><strong>Action Items:</strong> ${reflection.actionItems}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function deleteReflection(index) {
+            if (confirm('Are you sure you want to delete this reflection?')) {
+                reflections.splice(index, 1);
+                saveData();
+                renderReflections();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -64,15 +64,27 @@ function saveToStorage<T>(key: string, data: T[]): void {
   }
 }
 
-// Create stores
-export const achievements = writable<Achievement[]>(loadFromStorage<Achievement>(STORAGE_KEYS.ACHIEVEMENTS));
-export const prepAgendas = writable<PrepAgenda[]>(loadFromStorage<PrepAgenda>(STORAGE_KEYS.PREP_AGENDAS));
-export const reflections = writable<Reflection[]>(loadFromStorage<Reflection>(STORAGE_KEYS.REFLECTIONS));
+// Create stores with empty initial state
+export const achievements = writable<Achievement[]>([]);
+export const prepAgendas = writable<PrepAgenda[]>([]);
+export const reflections = writable<Reflection[]>([]);
 
-// Subscribe to changes and save to localStorage
-achievements.subscribe(value => saveToStorage(STORAGE_KEYS.ACHIEVEMENTS, value));
-prepAgendas.subscribe(value => saveToStorage(STORAGE_KEYS.PREP_AGENDAS, value));
-reflections.subscribe(value => saveToStorage(STORAGE_KEYS.REFLECTIONS, value));
+// Initialize stores from localStorage on client side only
+if (typeof window !== 'undefined') {
+  achievements.set(loadFromStorage<Achievement>(STORAGE_KEYS.ACHIEVEMENTS));
+  prepAgendas.set(loadFromStorage<PrepAgenda>(STORAGE_KEYS.PREP_AGENDAS));
+  reflections.set(loadFromStorage<Reflection>(STORAGE_KEYS.REFLECTIONS));
+}
+
+// Subscribe to changes and save to localStorage (only on client)
+if (typeof window !== 'undefined') {
+  achievements.subscribe(value => {
+    console.log('Achievements store updated:', value);
+    saveToStorage(STORAGE_KEYS.ACHIEVEMENTS, value);
+  });
+  prepAgendas.subscribe(value => saveToStorage(STORAGE_KEYS.PREP_AGENDAS, value));
+  reflections.subscribe(value => saveToStorage(STORAGE_KEYS.REFLECTIONS, value));
+}
 
 // Achievement store functions
 export const achievementActions = {
