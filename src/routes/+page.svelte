@@ -46,10 +46,10 @@
                 <div class="module-label">Reflection</div>
         </a>
         
-        <button class="module-nav-item" on:click={() => showHypeModal = true}>
+        <a href="/prompts" class="module-nav-item">
                 <div class="module-icon llm">⚡</div>
-                <div class="module-label">LLM Prompt<br>Generator</div>
-        </button>
+                <div class="module-label">Prompt<br>Generation</div>
+        </a>
 </div>
 
 <!-- Main Content Grid -->
