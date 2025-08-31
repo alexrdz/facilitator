@@ -21,8 +21,8 @@ input, button, textarea, select {
 
 /* CSS Custom Properties and Base Styles */
     :root {
-        --color-primary: hsl(220, 91%, 59%);
-        --color-primary-hover: hsl(221, 80%, 58%);
+        --color-primary: #B0C5A4;
+        --color-primary-hover: #9bb391;
         --color-secondary: hsl(215, 20%, 46%);
         --color-background: hsl(0, 0%, 100%);
         --color-surface: hsl(210, 40%, 98%);
@@ -120,6 +120,8 @@ h4 { font-size: var(--font-size-lg); }
         color: var(--color-text-secondary);
         cursor: pointer;
         transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
     }
     
     .nav-tab:hover {
