@@ -1,0 +1,74 @@
+1. Product Vision
+
+To provide a private, local-first web application that empowers engineers to take control of their career development and performance conversations, transforming unproductive one-on-ones into strategic, outcome-oriented meetings. The tool will help users build a compelling professional narrative by systematically tracking accomplishments, goals, and communication points.
+
+2. Target Audience
+
+Empowered engineers who want to proactively manage their career growth and are looking for a practical, low-friction tool to prepare for and reflect on one-on-one meetings with their managers.
+
+3. Goals & Success Metrics
+
+Primary Goal: Enable engineers to lead effective 1:1s, shifting the focus from the manager's agenda to the user's professional needs.
+
+Secondary Goal: Provide a structured way for users to document and quantify their professional accomplishments to be used for performance reviews, promotions, and job interviews.
+
+Success Metric: User satisfaction and adoption rate within the target team. A more qualitative metric would be receiving feedback that the tool has made their 1:1s "more useful."
+
+4. Core Features
+
+The application will have three main modules, as previously discussed: a 1:1 Prep section, a Hype Docs section, and a Reflection section.
+
+4.1. 1:1 Prep Module
+
+Objective: To help users quickly and efficiently create a clear agenda for their upcoming 1:1.
+
+Requirements:
+
+The user can create a new 1:1 agenda, automatically dated for the current week.
+
+The user can select and pull in accomplishments from their "Hype Docs" log.
+
+The user can input free-text notes for "What I Need Help With," "My Learning/Growth Goals," and "Questions for My Manager."
+
+A clean, printable view of the agenda is available for use during the meeting.
+
+4.2. Hype Docs Module
+
+Objective: To serve as a personal, searchable database of the user's career accomplishments.
+
+Requirements:
+
+The user can add new entries with the following fields:
+
+Date: Automatically populated.
+
+Title: A brief, descriptive title.
+
+The "What" (The Action): A detailed description of the work performed.
+
+The "Why" (The Context): An explanation of the problem solved or the business need addressed.
+
+The "Result" (The Impact): Quantifiable outcomes or metrics related to the accomplishment.
+
+The user can view a chronological list of all their accomplishments.
+
+Users can edit or delete existing entries.
+
+4.3. Reflection Module
+
+Objective: To enable users to reflect on their meetings and create a historical record of conversations and outcomes.
+
+Requirements:
+
+The user can create a post-1:1 reflection entry.
+
+The entry will include a "Meeting Rating" (e.g., a 1-5 star scale).
+
+The user can record "Key Takeaways" and "Manager Feedback" in free-text fields.
+
+The reflection can be linked to the corresponding 1:1 Prep agenda.
+
+5. Technical Requirements
+
+Technology Stack: The application will be built three separate times using the following frameworks:
+SvelteKit and Svelte stores for the web app - use a store for saving dat ato localstorage. DO NOT USE TAILWINDCSS - only modern CSS (e.g. logical properties, @layer, etc.). This app will be deployed to a static site with netlify.
