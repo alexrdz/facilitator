@@ -69,7 +69,7 @@ p {
   width: 100%;
   inline-size: clamp(90%, 80vw, 1200px);
   margin-inline: auto;
-  min-height: 80vh;
+  min-block-size: 80vh;
   background-color: var(--shell-bg);
   border-radius: var(--border-radius-lg);
   box-shadow: 0 20px 40px var(--shadow-color);
@@ -97,7 +97,7 @@ p {
 
 .user-controls svg {
   width: 1.5rem;
-  height: 1.5rem;
+  block-size: 1.5rem;
   color: var(--text-color-light);
   cursor: pointer;
 }
@@ -134,7 +134,7 @@ p {
 }
 .nav-icon-background {
   width: 56px;
-  height: 56px;
+  block-size: 56px;
   border-radius: 50%;
   background-color: #f7f7f7;
   display: flex;
@@ -144,7 +144,7 @@ p {
 }
 .nav-icon-background svg {
   width: 24px;
-  height: 24px;
+  block-size: 24px;
   color: var(--text-color);
 }
 .nav-item-label {
@@ -243,7 +243,7 @@ p {
 }
 .icon-btn svg {
   width: 1.25rem;
-  height: 1.25rem;
+  block-size: 1.25rem;
 }
 
 /* Sizes */
@@ -311,7 +311,7 @@ textarea:focus {
 }
 textarea {
   resize: vertical;
-  min-height: 100px;
+  min-block-size: 100px;
 }
 
 /* --- Page-specific styles --- */
@@ -380,7 +380,7 @@ textarea {
 }
 .prep-item input[type="checkbox"] {
   width: 1.25rem;
-  height: 1.25rem;
+  block-size: 1.25rem;
   accent-color: var(--primary-accent);
   cursor: pointer;
   flex-shrink: 0;
@@ -403,7 +403,7 @@ textarea {
 }
 .prep-item-delete svg {
   width: 1.25rem;
-  height: 1.25rem;
+  block-size: 1.25rem;
   color: var(--text-color-light);
   transition: color 0.2s ease;
 }
@@ -630,7 +630,7 @@ textarea {
 
 .form-textarea {
   resize: vertical;
-  min-height: 120px;
+  min-block-size: 120px;
 }
 
 .tag {

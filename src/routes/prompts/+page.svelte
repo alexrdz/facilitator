@@ -174,90 +174,64 @@ Structure it as a complete email ready to send, including suggested subject line
   </div>
 </div>
 
-<div
-  style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-xl); margin-bottom: var(--spacing-xl)"
->
+<div class="selection-grid">
   <!-- Accomplishments Selection -->
-  <div>
+  <section class="selection-section">
     <h3>Select Accomplishments</h3>
-    <div
-      style="max-height: 300px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--spacing-md); background-color: var(--color-surface)"
-    >
+    <div class="selection-container">
       {#if achievementList.length === 0}
-        <div
-          style="text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary)"
-        >
+        <div class="empty-state">
           <p>
-            No accomplishments found. <a
-              href="/hype"
-              style="color: var(--color-primary)">Add some Hype Docs</a
+            No accomplishments found. <a href="/hype" class="link"
+              >Add some Hype Docs</a
             > first!
           </p>
         </div>
       {:else}
         {#each achievementList as achievement}
-          <div
-            style="display: flex; align-items: flex-start; gap: var(--spacing-sm); padding: var(--spacing-sm); border-radius: var(--radius-sm); margin-bottom: var(--spacing-sm); cursor: pointer"
-            class:hover-bg={true}
-          >
+          <div class="selection-item">
             <input
               type="checkbox"
               id="achievement-{achievement.id}"
               checked={selectedAchievements.includes(achievement.id)}
               on:change={() => handleAchievementToggle(achievement.id)}
-              style="margin-top: var(--spacing-xs)"
+              class="selection-checkbox"
             />
-            <label
-              for="achievement-{achievement.id}"
-              style="cursor: pointer; flex: 1"
-            >
+            <label for="achievement-{achievement.id}" class="selection-label">
               <strong>{achievement.title}</strong><br />
-              <small style="color: var(--color-text-secondary)"
-                >{achievement.date}</small
-              >
+              <small class="item-date">{achievement.date}</small>
             </label>
           </div>
         {/each}
       {/if}
     </div>
-  </div>
+  </section>
 
   <!-- Reflections Selection -->
-  <div>
+  <section class="selection-section">
     <h3>Select Meeting Reflections</h3>
-    <div
-      style="max-height: 300px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--spacing-md); background-color: var(--color-surface)"
-    >
+    <div class="selection-container">
       {#if reflectionList.length === 0}
-        <div
-          style="text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary)"
-        >
+        <div class="empty-state">
           <p>
-            No reflections found. <a
-              href="/reflection"
-              style="color: var(--color-primary)">Add some reflections</a
+            No reflections found. <a href="/reflection" class="link"
+              >Add some reflections</a
             > first!
           </p>
         </div>
       {:else}
         {#each reflectionList as reflection}
-          <div
-            style="display: flex; align-items: flex-start; gap: var(--spacing-sm); padding: var(--spacing-sm); border-radius: var(--radius-sm); margin-bottom: var(--spacing-sm); cursor: pointer"
-            class:hover-bg={true}
-          >
+          <div class="selection-item">
             <input
               type="checkbox"
               id="reflection-{reflection.id}"
               checked={selectedReflections.includes(reflection.id)}
               on:change={() => handleReflectionToggle(reflection.id)}
-              style="margin-top: var(--spacing-xs)"
+              class="selection-checkbox"
             />
-            <label
-              for="reflection-{reflection.id}"
-              style="cursor: pointer; flex: 1"
-            >
+            <label for="reflection-{reflection.id}" class="selection-label">
               <strong>Meeting {reflection.date}</strong><br />
-              <small style="color: var(--color-text-secondary)">
+              <small class="item-rating">
                 {"★".repeat(reflection.rating)}{"☆".repeat(
                   5 - reflection.rating,
                 )}
@@ -267,15 +241,15 @@ Structure it as a complete email ready to send, including suggested subject line
         {/each}
       {/if}
     </div>
-  </div>
+  </section>
 </div>
 
 <!-- Prompt Generation Buttons -->
-<div style="margin-bottom: var(--spacing-xl)">
+<section class="generator-section">
   <h3>Generate Prompt</h3>
-  <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap">
+  <div class="generator-buttons">
     <button
-      class="btn btn-primary"
+      class="btn btn-primary btn-default"
       on:click={() => generatePrompt("performance")}
       disabled={selectedAchievements.length === 0 &&
         selectedReflections.length === 0}
@@ -283,7 +257,7 @@ Structure it as a complete email ready to send, including suggested subject line
       Performance Review
     </button>
     <button
-      class="btn btn-primary"
+      class="btn btn-primary btn-default"
       on:click={() => generatePrompt("bio")}
       disabled={selectedAchievements.length === 0 &&
         selectedReflections.length === 0}
@@ -291,29 +265,25 @@ Structure it as a complete email ready to send, including suggested subject line
       Professional Bio
     </button>
     <button
-      class="btn btn-primary"
+      class="btn btn-primary btn-default"
       on:click={() => generatePrompt("email")}
       disabled={selectedAchievements.length === 0 &&
         selectedReflections.length === 0}
     >
       Email to Manager
     </button>
-    <button class="btn btn-ghost" on:click={clearSelections}>
+    <button class="btn btn-ghost btn-default" on:click={clearSelections}>
       Clear All
     </button>
   </div>
-</div>
+</section>
 
 <!-- Generated Prompt Display -->
 {#if showPrompt}
-  <div
-    style="background-color: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--spacing-lg); margin-top: var(--spacing-xl)"
-  >
-    <div
-      style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md)"
-    >
+  <section class="prompt-display">
+    <header class="prompt-header">
       <h3>Generated Prompt</h3>
-      <button class="btn btn-ghost" on:click={copyToClipboard}>
+      <button class="btn btn-ghost btn-default" on:click={copyToClipboard}>
         <svg
           width="16"
           height="16"
@@ -321,22 +291,18 @@ Structure it as a complete email ready to send, including suggested subject line
           fill="none"
           stroke="currentColor"
           stroke-width="2"
-          style="margin-right: var(--spacing-xs)"
+          class="copy-icon"
         >
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
         </svg>
         Copy to Clipboard
       </button>
-    </div>
-    <div
-      style="background-color: var(--color-surface); border-radius: var(--radius-sm); padding: var(--spacing-md); font-family: monospace; font-size: var(--font-size-sm); line-height: 1.5; white-space: pre-wrap; max-height: 400px; overflow-y: auto"
-    >
+    </header>
+    <div class="prompt-content">
       {generatedPrompt}
     </div>
-    <div
-      style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background-color: var(--color-muted); border-radius: var(--radius-sm); font-size: var(--font-size-sm); color: var(--color-text-secondary); display: flex; align-items: center; gap: var(--spacing-xs)"
-    >
+    <div class="prompt-success">
       <svg
         width="16"
         height="16"
@@ -344,17 +310,141 @@ Structure it as a complete email ready to send, including suggested subject line
         fill="none"
         stroke="currentColor"
         stroke-width="2"
+        class="copy-icon"
       >
         <path d="M20 6L9 17l-5-5" />
       </svg>
       Prompt automatically copied to clipboard
     </div>
-  </div>
+  </section>
 {/if}
 
 <style>
-  .hover-bg:hover {
+  .selection-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-md);
+  }
+
+  .selection-section h3 {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .selection-container {
+    max-block-size: 40vh;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    background-color: var(--color-surface);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    color: var(--color-text-secondary);
+  }
+
+  .link {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .link:hover {
+    text-decoration: underline;
+  }
+
+  .selection-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-sm);
+    cursor: pointer;
+  }
+
+  .selection-item:hover {
     background-color: var(--color-muted);
+  }
+
+  .selection-checkbox {
+    margin-top: var(--spacing-xs);
+  }
+
+  .selection-label {
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .item-date,
+  .item-rating {
+    color: var(--color-text-secondary);
+  }
+
+  .generator-section {
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .generator-section h3 {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .generator-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+  }
+
+  .prompt-display {
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+  }
+
+  .prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .prompt-header h3 {
+    margin: 0;
+  }
+
+  .copy-icon {
+    margin-inline-end: var(--spacing-sm);
+  }
+
+  .prompt-content {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    font-family: monospace;
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+    white-space: pre-wrap;
+    max-block-size: 400px;
+    overflow-y: auto;
+  }
+
+  .prompt-success {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background-color: var(--color-muted);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
   }
 
   .btn:disabled {
