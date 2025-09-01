@@ -1,33 +1,19 @@
 <script lang="ts">
-	type Props = {
-		showModal: boolean;
-		onclose?: () => void;
-	};
-
-	let { showModal, onclose }: Props = $props();
+	let { showModal = $bindable() } = $props();
 
 	function handleClose() {
 		showModal = false;
-		onclose?.();
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') {
-			handleClose();
-		}
+    console.log(e);
+		if (e.key === 'Escape') handleClose();
 	}
-
-  $effect(() => {
-    document.addEventListener('keydown', handleKeydown);
-    return () => {
-      document.removeEventListener('keydown', handleKeydown);
-    };
-  });
 </script>
 
 {#if showModal}
-	<div class="modal-backdrop" on:click={handleClose}>
-		<div class="modal-content" on:click|stopPropagation>
+	<div class="modal-backdrop" on:click={handleClose} on:keydown={handleKeydown}>
+		<div class="modal-content" on:click={e => e.stopPropagation()}>
 			<slot />
 		</div>
 	</div>
@@ -40,24 +26,43 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0, 0, 0, 0.2);
+		background: rgba(0, 0, 0, 0.5);
 		display: flex;
-		justify-content: center;
 		align-items: center;
-		backdrop-filter: blur(5px);
-		z-index: 100;
+		justify-content: center;
 	}
 
 	.modal-content {
-    --shadow-color: rgba(61, 71, 81, 0.1);
-		--radius-lg: 2rem;
-		--shadow-xl: 0 10px 30px var(--shadow-color);
-
-		background-color: var(--shell-bg);
+		background: var(--shell-bg);
 		padding: var(--spacing-xl);
-		border-radius: var(--radius-lg);
-		box-shadow: var(--shadow-xl);
+		border-radius: var(--border-radius-lg);
+		max-width: 32rem;
 		width: 90%;
-		max-width: 500px;
+	}
+
+	:global(.modal__header) {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-md);
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	:global(.modal__title) {
+		margin: 0;
+		font-size: 1.25rem;
+		font-weight: 500;
+	}
+
+	:global(.modal__body) {
+		padding: var(--spacing-xl);
+	}
+
+	:global(.modal__footer) {
+		display: flex;
+		gap: var(--spacing-sm);
+		justify-content: flex-end;
+		padding: var(--spacing-lg) var(--spacing-xl);
+		border-top: 1px solid var(--border-color);
 	}
 </style>

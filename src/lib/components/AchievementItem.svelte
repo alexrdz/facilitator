@@ -24,10 +24,10 @@
 			<h3 class="achievement-title">{achievement.title}</h3>
 		</div>
 		<div class="achievement-actions">
-			<button class="btn btn-ghost btn-small" on:click={handleEdit}>Edit</button>
+			<button class="btn btn-ghost btn-small" onclick={handleEdit}>Edit</button>
 			<button
 				class="btn btn-ghost btn-small btn-danger"
-				on:click={handleDelete}>Delete</button
+				onclick={handleDelete}>Delete</button
 			>
 		</div>
 	</div>

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Modal from '$lib/components/Modal.svelte';
+	import Dialog from '$lib/components/Dialog.svelte';
 	import AchievementForm from '$lib/components/AchievementForm.svelte';
 	import AchievementItem from '$lib/components/AchievementItem.svelte';
 	import { achievements, achievementActions, getTodayDate, type Achievement } from '$lib/stores';
-	console.log($achievements);
 
 	let showModal = $state(false);
 	let editingAchievement = $state<Achievement | null>(null);
@@ -34,7 +34,7 @@
 		<h1>Hype Docs</h1>
 		<p>Your personal record of accomplishments and impact.</p>
 	</div>
-	<button class="btn btn-primary btn-default" on:click={handleShowAddForm}>Add New</button>
+	<button class="btn btn-primary btn-default" onclick={() => showModal = true}>Add New</button>
 </div>
 
 <div class="achievements-list">
@@ -54,6 +54,36 @@
 	{/if}
 </div>
 
-<Modal bind:showModal onclose={handleCloseModal}>
-	<AchievementForm bind:editingAchievement handleClose={handleCloseModal} />
-</Modal>
+<!-- <Modal bind:showModal>
+
+</Modal> -->
+
+<Dialog bind:open={showModal}>
+  <div class="modal-header">
+		<h2 class="modal-title">Add Achievement</h2>
+	</div>
+	<div class="modal-body">
+		<form id="achievement-form">
+			<AchievementForm bind:editingAchievement />
+		</form>
+	</div>
+  {#snippet footer()}
+	<!-- <form method="dialog" class="modal-footer">
+		<button type="button" class="btn btn-ghost btn-default" value="cancel" onclick={handleCloseModal}>Cancel</button>
+		<button type="submit" class="btn btn-primary btn-default" form="achievement-form">Save Achievement</button>
+	</form> -->
+  {/snippet}
+</Dialog>
+
+<style>
+	.modal-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: var(--spacing-lg);
+	}
+	.modal-title {
+		margin: 0;
+		font-size: 1.25rem;
+	}
+</style>

@@ -1,240 +1,375 @@
 <script lang="ts">
-        import { reflections, reflectionActions, getTodayDate, type Reflection } from '$lib/stores';
-        import { onMount } from 'svelte';
-        
-        let reflectionList: Reflection[] = [];
-        let showAddForm = false;
-        
-        // Form state
-        let date = '';
-        let rating = 0;
-        let takeaways = '';
-        let feedback = '';
-        let actionItems = '';
+	import Dialog from '$lib/components/Dialog.svelte';
+	import Chart from '$lib/components/Chart.svelte';
+	import { reflections, reflectionActions, getTodayDate, type Reflection } from '$lib/stores';
 
-        onMount(() => {
-                const unsubscribe = reflections.subscribe(value => {
-                        reflectionList = value;
-                });
-                return unsubscribe;
-        });
+	let showModal = $state(false);
 
-        function handleShowReflectionForm() {
-                clearForm();
-                showAddForm = true;
-                date = getTodayDate();
-        }
+	// Form state
+	let date = $state('');
+	let rating = $state(0);
+	let takeaways = $state('');
+	let feedback = $state('');
+	let actionItems = $state('');
 
-        function handleCancelForm() {
-                showAddForm = false;
-                clearForm();
-        }
+	function handleShowReflectionForm() {
+		clearForm();
+		date = getTodayDate();
+		showModal = true;
+	}
 
-        function clearForm() {
-                date = '';
-                rating = 0;
-                takeaways = '';
-                feedback = '';
-                actionItems = '';
-        }
+	function handleCloseModal() {
+		showModal = false;
+	}
 
-        function handleSaveReflection() {
-                if (!takeaways || rating === 0) {
-                        alert('Please provide a rating and key takeaways');
-                        return;
-                }
+	function clearForm() {
+		date = '';
+		rating = 0;
+		takeaways = '';
+		feedback = '';
+		actionItems = '';
+	}
 
-                const reflectionData = {
-                        date,
-                        rating,
-                        takeaways,
-                        feedback: feedback || undefined,
-                        actionItems: actionItems || undefined,
-                };
+	function handleSaveReflection(e: SubmitEvent) {
+		e.preventDefault();
+		if (!takeaways || rating === 0) {
+			alert('Please provide a rating and key takeaways');
+			return;
+		}
 
-                reflectionActions.add(reflectionData);
-                handleCancelForm();
-        }
+		const reflectionData = {
+			date,
+			rating,
+			takeaways,
+			feedback: feedback || undefined,
+			actionItems: actionItems || undefined,
+		};
 
-        function handleDeleteReflection(id: string) {
-                if (confirm('Are you sure you want to delete this reflection?')) {
-                        reflectionActions.delete(id);
-                }
-        }
+		reflectionActions.add(reflectionData);
+		handleCloseModal();
+	}
 
-        function setRating(newRating: number) {
-                rating = newRating;
-        }
+	function handleDeleteReflection(id: string) {
+		if (confirm('Are you sure you want to delete this reflection?')) {
+			reflectionActions.delete(id);
+		}
+	}
+
+	function setRating(newRating: number) {
+		rating = newRating;
+	}
+
+	// Chart data
+  let chartData = $derived($reflections.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map((reflection) => ({
+    date: reflection.date,
+    rating: reflection.rating
+  })));
+  console.log(chartData);
 </script>
 
-<!-- Navigation Back -->
-<a href="/" class="nav-pill">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--spacing-xs)">
-                <path d="M19 12H5"/>
-                <polyline points="12,19 5,12 12,5"/>
-        </svg>
-        Back to Dashboard
-</a>
-
-<div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg)">
-                <h2>Meeting Reflections</h2>
-                <button class="btn btn-primary" on:click={handleShowReflectionForm}>
-                        Add New Reflection
-                </button>
-        </div>
-
-        {#if showAddForm}
-                <div style="margin-bottom: var(--spacing-xl)">
-                        <h3>New Meeting Reflection</h3>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-xl)">
-                                <div class="form-group">
-                                        <label class="form-label" for="reflection-date">Meeting Date</label>
-                                        <input 
-                                                type="date" 
-                                                class="form-input" 
-                                                id="reflection-date"
-                                                bind:value={date}
-                                        />
-                                </div>
-                                <div class="form-group">
-                                        <label class="form-label">Meeting Rating</label>
-                                        <div style="display: flex; gap: var(--spacing-sm); align-items: center">
-                                                <div style="display: flex; gap: var(--spacing-xs)">
-                                                        {#each [1, 2, 3, 4, 5] as starRating}
-                                                                <span
-                                                                        style="width: 24px; height: 24px; cursor: pointer; color: {starRating <= rating ? 'var(--color-warning)' : 'var(--color-border)'}; transition: color 0.2s ease; font-size: 24px; line-height: 1; user-select: none"
-                                                                        on:click={() => setRating(starRating)}
-                                                                        role="button"
-                                                                        tabindex="0"
-                                                                        on:keydown={(e) => e.key === 'Enter' && setRating(starRating)}
-                                                                >
-                                                                        ★
-                                                                </span>
-                                                        {/each}
-                                                </div>
-                                                <span style="color: var(--color-text-secondary)">
-                                                        {rating > 0 ? ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][rating] : 'Click to rate'}
-                                                </span>
-                                        </div>
-                                </div>
-                        </div>
-
-                        <div class="form-group">
-                                <label class="form-label" for="key-takeaways">Key Takeaways</label>
-                                <textarea 
-                                        class="form-textarea" 
-                                        id="key-takeaways" 
-                                        placeholder="Main points and decisions from the meeting..."
-                                        bind:value={takeaways}
-                                ></textarea>
-                        </div>
-
-                        <div class="form-group">
-                                <label class="form-label" for="manager-feedback">Manager Feedback</label>
-                                <textarea 
-                                        class="form-textarea" 
-                                        id="manager-feedback" 
-                                        placeholder="Feedback received from your manager..."
-                                        bind:value={feedback}
-                                ></textarea>
-                        </div>
-
-                        <div class="form-group">
-                                <label class="form-label" for="action-items">Action Items</label>
-                                <textarea 
-                                        class="form-textarea" 
-                                        id="action-items" 
-                                        placeholder="Follow-up tasks and commitments..."
-                                        bind:value={actionItems}
-                                ></textarea>
-                        </div>
-
-                        <div style="display: flex; gap: var(--spacing-md)">
-                                <button class="btn btn-primary" on:click={handleSaveReflection}>
-                                        Save Reflection
-                                </button>
-                                <button class="btn btn-ghost" on:click={handleCancelForm}>
-                                        Cancel
-                                </button>
-                        </div>
-                </div>
-        {/if}
-
-        <div>
-                {#if reflectionList.length === 0}
-                        <div style="text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary)">
-                                <h3>No reflections yet</h3>
-                                <p>Start tracking your 1:1 meetings by adding your first reflection!</p>
-                        </div>
-                {:else}
-                        {#each reflectionList as reflection}
-                                <div class="achievement-item">
-                                        <div class="achievement-header">
-                                                <div>
-                                                        <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); font-weight: 500">{reflection.date}</div>
-                                                        <div style="font-weight: 600; margin-bottom: var(--spacing-sm)">
-                                                                Meeting Rating:
-                                                        {#each Array(reflection.rating) as _}
-                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" style="color: var(--color-warning)">
-                                                                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
-                                                                </svg>
-                                                        {/each}
-                                                        {#each Array(5 - reflection.rating) as _}
-                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-border)">
-                                                                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
-                                                                </svg>
-                                                        {/each}
-                                                        </div>
-                                                </div>
-                                                <div style="display: flex; gap: var(--spacing-sm)">
-                                                        <button 
-                                                                class="btn btn-ghost" 
-                                                                style="padding: var(--spacing-sm) var(--spacing-md); font-size: var(--font-size-sm); color: var(--color-error)"
-                                                                on:click={() => handleDeleteReflection(reflection.id)}
-                                                        >
-                                                                Delete
-                                                        </button>
-                                                </div>
-                                        </div>
-                                        <div style="margin-bottom: var(--spacing-sm)">
-                                                <strong>Key Takeaways:</strong> {reflection.takeaways}
-                                        </div>
-                                        {#if reflection.feedback}
-                                                <div style="margin-bottom: var(--spacing-sm)">
-                                                        <strong>Manager Feedback:</strong> {reflection.feedback}
-                                                </div>
-                                        {/if}
-                                        {#if reflection.actionItems}
-                                                <div>
-                                                        <strong>Action Items:</strong> {reflection.actionItems}
-                                                </div>
-                                        {/if}
-                                </div>
-                        {/each}
-                {/if}
-        </div>
+<div class="page-header">
+	<div>
+		<h1>Reflection</h1>
+		<p>Track meeting satisfaction and identify patterns over time.</p>
+	</div>
+	<button class="btn btn-primary btn-default" onclick={handleShowReflectionForm}>Add Reflection</button>
 </div>
 
+<!-- Chart Section -->
+<div class="chart-card">
+  <h3>Meeting Rating Over Time</h3>
+	<div class="chart-container">
+    {#if chartData.length > 0}
+		<Chart
+			type="line"
+			data={{
+				labels: chartData.map(d => d.date),
+				datasets: [{
+					label: 'Rating',
+					data: chartData.map(d => d.rating),
+					borderColor: '#f59e0b',
+					tension: 0.3
+				}]
+			}}
+			options={{
+				responsive: true,
+				maintainAspectRatio: false,
+				scales: {
+					y: {
+						beginAtZero: true,
+						max: 5,
+						min: 1,
+						ticks: {
+							stepSize: 1
+						}
+					}
+				}
+			}}
+			plugins={[]}
+			responsive={true}
+			maintainAspectRatio={false}
+			updateMode="active"
+			className=""
+			style=""
+			onReady={() => {}}
+		/>
+    {/if}
+		<div class="chart-legend">
+			<div class="legend-item">
+				<div class="legend-color"></div>
+				<span>rating</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Past Reflections Section -->
+<div class="reflections-section">
+	<h3>Past Reflections</h3>
+
+	{#if $reflections.length === 0}
+		<div class="empty-state">
+			<h3>No reflections yet</h3>
+			<p>Start tracking your 1:1 meetings by adding your first reflection!</p>
+		</div>
+	{:else}
+		{#each $reflections as reflection (reflection.id)}
+			<div class="reflection-item">
+				<div class="reflection-header">
+					<div class="reflection-date">{reflection.date}</div>
+					<div class="reflection-rating">
+						{#each Array(reflection.rating) as _}
+							<span class="star filled">★</span>
+						{/each}
+						{#each Array(5 - reflection.rating) as _}
+							<span class="star">★</span>
+						{/each}
+					</div>
+				</div>
+				<div class="reflection-content">
+					{reflection.takeaways}
+				</div>
+				{#if reflection.feedback}
+					<div class="reflection-feedback">
+						<strong>Feedback:</strong> {reflection.feedback}
+					</div>
+				{/if}
+				{#if reflection.actionItems}
+					<div class="reflection-actions">
+						<strong>Action Items:</strong> {reflection.actionItems}
+					</div>
+				{/if}
+			</div>
+		{/each}
+	{/if}
+</div>
+
+<!-- Modal for adding reflections -->
+<Dialog bind:open={showModal}>
+	<div class="modal-header">
+		<h2 class="modal-title">Add Reflection</h2>
+	</div>
+	<div class="modal-body">
+	<form id="reflection-form" onsubmit={handleSaveReflection}>
+		<div class="form-group">
+			<label class="form-label" for="reflection-date">Meeting Date</label>
+			<input
+				type="date"
+				id="reflection-date"
+				bind:value={date}
+				required
+			/>
+		</div>
+
+		<div class="form-group">
+			<label class="form-label" for="rating-input">Meeting Rating</label>
+			<div class="rating-input" id="rating-input">
+				{#each [1, 2, 3, 4, 5] as starRating}
+					<span
+						class="rating-star {starRating <= rating ? 'active' : ''}"
+						onclick={() => setRating(starRating)}
+						role="button"
+						tabindex="0"
+						onkeydown={(e) => e.key === 'Enter' && setRating(starRating)}
+					>
+						★
+					</span>
+				{/each}
+				<span class="rating-text">
+					{rating > 0 ? ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][rating] : 'Click to rate'}
+				</span>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="form-label" for="key-takeaways">Key Takeaways</label>
+			<textarea
+				id="key-takeaways"
+				placeholder="Main points and decisions from the meeting..."
+				bind:value={takeaways}
+				required
+			></textarea>
+		</div>
+
+		<div class="form-group">
+			<label class="form-label" for="manager-feedback">Manager Feedback (Optional)</label>
+			<textarea
+				id="manager-feedback"
+				placeholder="Feedback received from your manager..."
+				bind:value={feedback}
+			></textarea>
+		</div>
+
+		<div class="form-group">
+			<label class="form-label" for="action-items">Action Items (Optional)</label>
+			<textarea
+				id="action-items"
+				placeholder="Follow-up tasks and commitments..."
+				bind:value={actionItems}
+			></textarea>
+		</div>
+
+	</form>
+	</div>
+	<form method="dialog" class="modal-footer">
+		<button type="submit" class="btn btn-primary btn-default" form="reflection-form">Save Reflection</button>
+		<button type="button" class="btn btn-ghost btn-default" value="cancel" onclick={handleCloseModal}>Cancel</button>
+	</form>
+  {#snippet footer()}{/snippet}
+</Dialog>
+
 <style>
-        .achievement-item {
-                background-color: var(--color-background);
-                border: 1px solid var(--color-border);
-                border-radius: var(--radius-md);
-                padding: var(--spacing-lg);
-                margin-bottom: var(--spacing-md);
-                transition: box-shadow 0.2s ease;
-        }
+	.chart-card {
+		background: var(--shell-bg);
+		border: 1px solid var(--border-color);
+		border-radius: var(--border-radius-lg);
+		padding: var(--spacing-xl);
+		margin-bottom: var(--spacing-xl);
+	}
 
-        .achievement-item:hover {
-                box-shadow: var(--shadow-md);
-        }
+	.chart-card h3 {
+		margin: 0 0 var(--spacing-lg) 0;
+		font-size: var(--font-size-lg);
+		font-weight: 600;
+		color: var(--text-color);
+	}
 
-        .achievement-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: var(--spacing-md);
-        }
+	.chart-container {
+		position: relative;
+	}
+
+
+	.chart-legend {
+		display: flex;
+		justify-content: center;
+		margin-top: var(--spacing-md);
+	}
+
+	.legend-item {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+		font-size: var(--font-size-sm);
+		color: var(--text-color-secondary);
+	}
+
+	.legend-color {
+		width: 12px;
+		height: 3px;
+		background: #f59e0b;
+		border-radius: 2px;
+	}
+
+	.reflections-section {
+		margin-top: var(--spacing-xl);
+	}
+
+	.reflections-section h3 {
+		margin: 0 0 var(--spacing-lg) 0;
+		font-size: var(--font-size-lg);
+		font-weight: 600;
+		color: var(--text-color);
+	}
+
+	.reflection-item {
+		background: var(--shell-bg);
+		border: 1px solid var(--border-color);
+		border-radius: var(--border-radius-lg);
+		padding: var(--spacing-lg);
+		margin-bottom: var(--spacing-md);
+	}
+
+	.reflection-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: var(--spacing-md);
+	}
+
+	.reflection-date {
+		font-weight: 600;
+		color: var(--text-color);
+	}
+
+	.reflection-rating {
+		display: flex;
+		gap: var(--spacing-xs);
+	}
+
+	.star {
+		color: #e5e7eb;
+		font-size: var(--font-size-lg);
+	}
+
+	.star.filled {
+		color: #f59e0b;
+	}
+
+	.reflection-content {
+		color: var(--text-color);
+		line-height: 1.5;
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.reflection-feedback,
+	.reflection-actions {
+		color: var(--text-color-secondary);
+		font-size: var(--font-size-sm);
+		margin-top: var(--spacing-sm);
+	}
+
+	.rating-input {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-md);
+	}
+
+	.rating-star {
+		font-size: 24px;
+		color: #e5e7eb;
+		cursor: pointer;
+		transition: color 0.2s ease;
+		user-select: none;
+	}
+
+	.rating-star:hover,
+	.rating-star.active {
+		color: #f59e0b;
+	}
+
+	.rating-text {
+		color: var(--text-color-secondary);
+		font-size: var(--font-size-sm);
+	}
+
+	.empty-state {
+		text-align: center;
+		padding: var(--spacing-2xl);
+		color: var(--text-color-secondary);
+	}
+
+	.empty-state h3 {
+		margin-bottom: var(--spacing-sm);
+		color: var(--text-color);
+	}
 </style>
