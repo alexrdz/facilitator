@@ -5,9 +5,8 @@ export interface Achievement {
   id: string;
   title: string;
   date: string;
-  action: string;
-  context: string;
-  impact: string;
+  description: string;
+  category: string;
   createdAt: string;
 }
 
@@ -97,17 +96,17 @@ export const achievementActions = {
     achievements.update(list => [newAchievement, ...list]);
     return newAchievement;
   },
-  
+
   update: (id: string, achievementData: Omit<Achievement, 'id' | 'createdAt'>) => {
-    achievements.update(list => 
-      list.map(item => 
-        item.id === id 
+    achievements.update(list =>
+      list.map(item =>
+        item.id === id
           ? { ...item, ...achievementData }
           : item
       )
     );
   },
-  
+
   delete: (id: string) => {
     achievements.update(list => list.filter(item => item.id !== id));
   }
@@ -137,7 +136,7 @@ export const reflectionActions = {
     reflections.update(list => [newReflection, ...list]);
     return newReflection;
   },
-  
+
   delete: (id: string) => {
     reflections.update(list => list.filter(item => item.id !== id));
   }

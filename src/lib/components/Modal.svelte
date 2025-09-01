@@ -1,13 +1,28 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	type Props = {
+		showModal: boolean;
+		onclose?: () => void;
+	};
 
-	export let showModal: boolean;
-	const dispatch = createEventDispatcher();
+	let { showModal, onclose }: Props = $props();
 
 	function handleClose() {
 		showModal = false;
-		dispatch('close');
+		onclose?.();
 	}
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape') {
+			handleClose();
+		}
+	}
+
+  $effect(() => {
+    document.addEventListener('keydown', handleKeydown);
+    return () => {
+      document.removeEventListener('keydown', handleKeydown);
+    };
+  });
 </script>
 
 {#if showModal}

@@ -22,7 +22,7 @@ export const actions = {
     const achievementData = {
       title,
       date: new Date().toISOString().split("T")[0],
-      action: description, // Mapping new description to an old field
+      description,
       context: "",
       impact: "",
     };

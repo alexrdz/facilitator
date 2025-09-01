@@ -54,6 +54,6 @@
 	{/if}
 </div>
 
-<Modal bind:showModal on:close={handleCloseModal}>
+<Modal bind:showModal onclose={handleCloseModal}>
 	<AchievementForm bind:editingAchievement handleClose={handleCloseModal} />
 </Modal>

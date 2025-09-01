@@ -1,27 +1,56 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { Achievement } from '$lib/stores';
+	import { achievementActions, type Achievement } from '$lib/stores';
 
-	export let handleClose: () => void;
-	export let editingAchievement: Achievement | null;
+	type Props = {
+		handleClose: () => void;
+		editingAchievement: Achievement | null;
+	};
 
-	let title = '';
-	let category = '';
-	let description = '';
+	let { handleClose, editingAchievement }: Props = $props();
 
-	$: if (editingAchievement) {
-		title = editingAchievement.title;
-		category = 'Project Milestone'; // Placeholder logic
-		description = `${editingAchievement.action} ${editingAchievement.context} ${editingAchievement.impact}`;
-	} else {
-		title = '';
-		category = '';
-		description = '';
+	let title = $state('');
+	let category = $state('');
+	let description = $state('');
+
+	$effect(() => {
+		if (editingAchievement) {
+			title = editingAchievement.title;
+			category = editingAchievement.category;
+			description = editingAchievement.description;
+		} else {
+			title = '';
+			category = '';
+			description = '';
+		}
+	});
+
+	function handleSubmit(e: SubmitEvent) {
+		e.preventDefault();
+
+		if (!title || !category || !description) {
+			alert('Please fill in all fields.');
+			return;
+		}
+
+		const achievementData = {
+			title,
+			date: new Date().toISOString().split('T')[0],
+			description,
+			category,
+		};
+
+		if (editingAchievement) {
+			achievementActions.update(editingAchievement.id, achievementData);
+		} else {
+			achievementActions.add(achievementData);
+		}
+
+		handleClose();
 	}
 </script>
 
 <h3>{editingAchievement ? 'Edit Hype Doc' : 'Create New Hype Doc'}</h3>
-<form method="POST" action="?/save" use:enhance on:submit={handleClose}>
+<form on:submit={handleSubmit}>
 	<input type="hidden" name="id" value={editingAchievement?.id || ''} />
 
 	<div class="form-group">
@@ -56,9 +85,9 @@
 	</div>
 
 	<div class="form-actions">
+    <button type="submit" class="btn btn-primary btn-default">Save</button>
 		<button class="btn btn-ghost btn-default" on:click|preventDefault={handleClose}>
 			Cancel
 		</button>
-		<button type="submit" class="btn btn-primary btn-default">Save</button>
 	</div>
 </form>
