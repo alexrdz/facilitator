@@ -66,8 +66,8 @@ p {
 
 /* --- App Layout --- */
 #app-shell {
-  width: 100%;
-  inline-size: clamp(90%, 80vw, 1200px);
+  inline-size: 100%;
+  max-inline-size: clamp(480px, 80vw, 1200px);
   margin-inline: auto;
   min-block-size: 80vh;
   background-color: var(--shell-bg);
@@ -641,4 +641,13 @@ textarea {
   font-weight: 600;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
+}
+
+footer {
+  margin-top: calc(4 * var(--spacing-xl));
+  text-align: center;
+
+  span {
+    font-weight: bold;
+  }
 }

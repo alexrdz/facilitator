@@ -1,17 +1,17 @@
 <script lang="ts">
   import "../app.css";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
 
   let { children } = $props();
 
   // Determine current view based on URL
-  const currentPath = $derived($page.url.pathname);
+  const currentPath = $derived(page.url.pathname);
   const isHome = $derived(currentPath === "/");
 </script>
 
 <div id="app-shell">
   <header id="app-header">
-    <h1>1:1 Faciliation</h1>
+    <h1>1:1 Facilitation</h1>
     <p>Hold your manager accountable.</p>
     <!-- <div class="user-controls">
       <svg
@@ -163,3 +163,7 @@
     </main>
   </div>
 </div>
+
+<footer>
+  <p>@copyleft 2025 <span>1:1 Facilitation</span>. All rights reserved.</p>
+</footer>
