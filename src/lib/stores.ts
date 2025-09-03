@@ -10,6 +10,12 @@ export interface Achievement {
   createdAt: string;
 }
 
+export interface Topic {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
 export interface PrepAgenda {
   id: string;
   date: string;
@@ -37,6 +43,7 @@ const STORAGE_KEYS = {
   ACHIEVEMENTS: 'careerSync_achievements',
   PREP_AGENDAS: 'careerSync_prepAgendas',
   REFLECTIONS: 'careerSync_reflections',
+  TOPICS: 'careerSync_topics',
 } as const;
 
 // Helper to generate UUID-like IDs
@@ -67,12 +74,14 @@ function saveToStorage<T>(key: string, data: T[]): void {
 export const achievements = writable<Achievement[]>([]);
 export const prepAgendas = writable<PrepAgenda[]>([]);
 export const reflections = writable<Reflection[]>([]);
+export const topics = writable<Topic[]>([]);
 
 // Initialize stores from localStorage on client side only
 if (typeof window !== 'undefined') {
   achievements.set(loadFromStorage<Achievement>(STORAGE_KEYS.ACHIEVEMENTS));
   prepAgendas.set(loadFromStorage<PrepAgenda>(STORAGE_KEYS.PREP_AGENDAS));
   reflections.set(loadFromStorage<Reflection>(STORAGE_KEYS.REFLECTIONS));
+  topics.set(loadFromStorage<Topic>(STORAGE_KEYS.TOPICS));
 }
 
 // Subscribe to changes and save to localStorage (only on client)
@@ -83,6 +92,7 @@ if (typeof window !== 'undefined') {
   });
   prepAgendas.subscribe(value => saveToStorage(STORAGE_KEYS.PREP_AGENDAS, value));
   reflections.subscribe(value => saveToStorage(STORAGE_KEYS.REFLECTIONS, value));
+  topics.subscribe(value => saveToStorage(STORAGE_KEYS.TOPICS, value));
 }
 
 // Achievement store functions
@@ -115,6 +125,7 @@ export const achievementActions = {
 // Prep agenda store functions
 export const prepAgendaActions = {
   add: (agendaData: Omit<PrepAgenda, 'id' | 'createdAt'>) => {
+    console.log(agendaData);
     const newAgenda: PrepAgenda = {
       ...agendaData,
       id: generateId(),
@@ -122,6 +133,31 @@ export const prepAgendaActions = {
     };
     prepAgendas.update(list => [newAgenda, ...list]);
     return newAgenda;
+  }
+};
+
+// Topic store functions
+export const topicActions = {
+  add: (title: string) => {
+    const newTopic: Topic = {
+      id: generateId(),
+      title,
+      completed: false
+    };
+    topics.update(list => [...list, newTopic]);
+    return newTopic;
+  },
+
+  toggle: (id: string) => {
+    topics.update(list =>
+      list.map(topic =>
+        topic.id === id ? { ...topic, completed: !topic.completed } : topic
+      )
+    );
+  },
+
+  delete: (id: string) => {
+    topics.update(list => list.filter(topic => topic.id !== id));
   }
 };
 
